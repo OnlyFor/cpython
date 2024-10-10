@@ -862,6 +862,7 @@ _PyObject_ClearFreeLists(struct _Py_freelists *freelists, int is_finalization)
         // stacks during GC, so emptying the free-list is counterproductive.
         clear_freelist(&freelists->object_stack_chunks, 1, PyMem_RawFree);
     }
+    clear_freelist(&freelists->unicode_writers, is_finalization, PyMem_Free);
 }
 
 /*
@@ -2452,7 +2453,7 @@ _Py_SetImmortalUntracked(PyObject *op)
     op->ob_ref_local = _Py_IMMORTAL_REFCNT_LOCAL;
     op->ob_ref_shared = 0;
 #else
-    op->ob_refcnt = _Py_IMMORTAL_REFCNT;
+    op->ob_refcnt = _Py_IMMORTAL_INITIAL_REFCNT;
 #endif
 }
 
